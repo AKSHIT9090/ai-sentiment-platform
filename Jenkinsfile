@@ -1,0 +1,93 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                checkout scm
+            }
+        }
+
+        stage('Backend Tests') {
+            steps {
+                echo 'Running backend tests...'
+                dir('backend') {
+                    bat 'npm ci'
+                    bat 'npm test -- --runInBand'
+                }
+            }
+        }
+
+        stage('ML Service Tests') {
+            steps {
+                echo 'Running ML service tests...'
+                dir('ml-service') {
+                    bat 'python -m pytest -v'
+                }
+            }
+        }
+
+        stage('Frontend Lint') {
+            steps {
+                echo 'Running frontend lint...'
+                dir('frontend') {
+                    bat 'npm ci'
+                    bat 'npm run lint'
+                }
+            }
+        }
+
+        stage('Docker Compose Validation') {
+            steps {
+                echo 'Validating Docker Compose configuration...'
+                bat 'docker compose config'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                echo 'Building Docker images...'
+                bat 'docker compose build'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Starting application stack...'
+                bat 'docker compose up -d'
+            }
+        }
+
+        stage('Health Checks') {
+            steps {
+                echo 'Checking application health...'
+
+                bat '''
+                    powershell -Command "$backend = Invoke-RestMethod http://localhost:5000/api/health; if ($backend.status -ne 'healthy') { exit 1 }"
+                '''
+
+                bat '''
+                    powershell -Command "$ml = Invoke-RestMethod http://localhost:8000/health; if ($ml.status -ne 'healthy') { exit 1 }"
+                '''
+
+                echo 'Backend and ML health checks passed.'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'CI/CD pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'CI/CD pipeline failed. Check the stage logs.'
+        }
+
+        always {
+            bat 'docker compose ps'
+        }
+    }
+}
