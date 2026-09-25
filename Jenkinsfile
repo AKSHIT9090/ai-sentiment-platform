@@ -21,13 +21,15 @@ pipeline {
         }
 
         stage('ML Service Tests') {
-            steps {
-                echo 'Running ML service tests...'
-                dir('ml-service') {
-                    bat 'python -m pytest -v'
-                }
-            }
-        }
+ 	    steps {
+       		echo 'Installing ML test dependencies...'
+     		dir('ml-service') {
+            		bat 'python -m pip install -r requirements.txt'
+            		bat 'python -m pip install pytest httpx'
+            		bat 'python -m pytest -v'
+            	}
+    	    }
+	}
 
         stage('Frontend Lint') {
             steps {
