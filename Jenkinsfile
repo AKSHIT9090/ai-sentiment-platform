@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        PATH = "C:\\Users\\AKKI\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
+        PATH = "C:\\Users\\AKKI\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;C:\\Users\\AKKI\\.docker\\cli-plugins;$env.PATH"
     }
     agent any
 
