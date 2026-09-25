@@ -1,4 +1,7 @@
 pipeline {
+    environment {
+        PATH = "C:\\Users\\AKKI\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
+    }
     agent any
 
     stages {
