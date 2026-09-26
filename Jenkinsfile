@@ -1,9 +1,16 @@
 pipeline {
+
     environment {
+        GIT_HTTP_VERSION = "HTTP/1.1"
         PATH = "C:\\Users\\AKKI\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;$env.PATH"
         DOCKER_CONFIG = "C:\\Users\\AKKI\\.docker"
     }
+
     agent any
+
+    options {
+        skipDefaultCheckout(true)
+    }
 
     stages {
 
@@ -25,15 +32,15 @@ pipeline {
         }
 
         stage('ML Service Tests') {
- 	    steps {
-       		echo 'Installing ML test dependencies...'
-     		dir('ml-service') {
-            		bat 'python -m pip install -r requirements.txt'
-            		bat 'python -m pip install pytest httpx'
-            		bat 'python -m pytest -v'
-            	}
-    	    }
-	    }
+            steps {
+                echo 'Installing ML test dependencies...'
+                dir('ml-service') {
+                    bat 'python -m pip install -r requirements.txt'
+                    bat 'python -m pip install pytest httpx'
+                    bat 'python -m pytest -v'
+                }
+            }
+        }
 
         stage('Code Quality') {
             steps {
@@ -93,7 +100,7 @@ pipeline {
         }
 
         always {
-            bat 'docker compose ps'
+            echo 'Pipeline execution finished.'
         }
     }
 }
