@@ -85,7 +85,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Starting application stack...'
-                bat 'docker compose up -d'
+
+                bat '''
+                    docker rm -f sentiment-ml-compose 2>nul
+                    docker rm -f sentiment-postgres 2>nul
+                    docker rm -f sentiment-backend-compose 2>nul
+                    docker rm -f sentiment-frontend-compose 2>nul
+
+                    docker compose up -d
+                '''
             }
         }
 
