@@ -52,6 +52,22 @@ pipeline {
             }
         }
 
+        stage('Security') {
+            steps {
+                echo 'Running security vulnerability checks...'
+
+                dir('backend') {
+                    bat 'npm audit --audit-level=high'
+                }
+
+                dir('frontend') {
+                    bat 'npm audit --audit-level=high'
+                }
+
+                echo 'Security checks passed.'
+            }
+        }
+
         stage('Docker Compose Validation') {
             steps {
                 echo 'Validating Docker Compose configuration...'
