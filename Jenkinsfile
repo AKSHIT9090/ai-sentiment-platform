@@ -33,14 +33,14 @@ pipeline {
             		bat 'python -m pytest -v'
             	}
     	    }
-	}
+	    }
 
-        stage('Frontend Lint') {
+        stage('Code Quality') {
             steps {
-                echo 'Running frontend lint...'
+                echo 'Running code quality checks...'
                 dir('frontend') {
                     bat 'npm ci'
-                    bat 'npm run lint'
+                    bat 'npm run lint -- --max-warnings 0'
                 }
             }
         }
