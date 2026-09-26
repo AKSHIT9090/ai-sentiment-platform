@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS predictions (
+    id SERIAL PRIMARY KEY,
+    text TEXT NOT NULL,
+    sentiment VARCHAR(50) NOT NULL,
+    confidence DOUBLE PRECISION,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
